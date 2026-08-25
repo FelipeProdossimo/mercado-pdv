@@ -1,0 +1,48 @@
+<div class="min-h-screen bg-gray-950 flex items-center justify-center">
+  <div class="bg-gray-900 w-full max-w-md rounded-2xl p-8 shadow-2xl">
+    <h1 class="text-4xl font-bold text-white text-center mb-8">
+      Mercado ERP
+    </h1>
+    <form
+      class="space-y-5"
+      (ngSubmit)="login()">
+      <div>
+        <label class="text-gray-300 block mb-2">
+          Email
+        </label>
+        <input
+          [(ngModel)]="email"
+          name="email"
+          type="email"
+          class="w-full rounded-xl bg-gray-800 border border-gray-700 p-3 text-white outline-none focus:border-blue-500"
+        />
+      </div>
+      <div>
+        <label class="text-gray-300 block mb-2">
+          Senha
+        </label>
+        <input
+          [(ngModel)]="senha"
+          name="senha"
+          type="password"
+          class="w-full rounded-xl bg-gray-800 border border-gray-700 p-3 text-white outline-none focus:border-blue-500"
+        />
+      </div>
+      @if (erro) {
+        <div class="text-red-400 text-sm">
+          {{ erro }}
+        </div>
+      }
+      <button
+        [disabled]="loading"
+        class="w-full bg-blue-600 hover:bg-blue-700 transition-all rounded-xl p-3 text-white font-bold">
+        @if (loading) {
+          Entrando...
+        }
+        @else {
+          Entrar
+        }
+      </button>
+    </form>
+  </div>
+</div>

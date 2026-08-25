@@ -1,0 +1,37 @@
+<div class="p-8 text-white">
+  @if (venda) {
+    <h1 class="text-4xl font-bold mb-2">Venda #{{ venda.id }}</h1>
+
+    <p class="text-gray-400 mb-8">
+      {{ venda.dataVenda | date: 'dd/MM/yyyy HH:mm' }}
+    </p>
+
+    <div class="bg-gray-900 rounded-2xl p-6">
+      <h2 class="text-2xl font-bold mb-6">Itens da Venda</h2>
+
+      @for (item of venda.itens; track $index) {
+        <div class="flex justify-between mb-4">
+          <div>{{ item.descricaoProduto }}</div>
+
+          <div>
+            {{ item.quantidade }}x -
+
+            {{ item.valorUnitario | currency: 'BRL' }}
+          </div>
+
+          <div>
+            {{ item.total | currency: 'BRL' }}
+          </div>
+        </div>
+      }
+
+      <hr class="border-gray-700 my-6" />
+
+      <div class="text-3xl font-bold">
+        Total:
+
+        {{ venda.valorTotal | currency: 'BRL' }}
+      </div>
+    </div>
+  }
+</div>

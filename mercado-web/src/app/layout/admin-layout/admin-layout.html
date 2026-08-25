@@ -1,0 +1,25 @@
+<div class="min-h-screen flex bg-gray-950 text-white">
+  <aside class="w-64 bg-gray-900 border-r border-gray-800">
+    <div class="p-6 text-2xl font-bold">FOLHA VERDE 🚀</div>
+
+    <nav class="p-4">
+      <a routerLink="/dashboard" class="block p-3 rounded-lg hover:bg-gray-800 mb-2">
+        📊 Dashboard
+      </a>
+
+      <a routerLink="/produtos" class="block p-3 rounded-lg hover:bg-gray-800 mb-2">
+        📦 Produtos
+      </a>
+
+      <a routerLink="/vendas" class="block p-3 rounded-lg hover:bg-gray-800 mb-2"> 🛒 Vendas </a>
+
+      <a routerLink="/relatorios" class="block p-3 rounded-lg hover:bg-gray-800 mb-2">
+        📑 Relatórios
+      </a>
+    </nav>
+  </aside>
+
+  <main class="flex-1">
+    <router-outlet />
+  </main>
+</div>

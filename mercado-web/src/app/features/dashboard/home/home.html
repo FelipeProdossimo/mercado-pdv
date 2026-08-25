@@ -1,0 +1,73 @@
+<div class="min-h-screen bg-gray-950 text-white p-8">
+  <h1 class="text-4xl font-bold mb-8">Dashboard</h1>
+
+  @if (dashboard) {
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+      <div class="bg-gray-900 rounded-2xl p-6">
+        <p class="text-gray-400 mb-2">Total vendido hoje</p>
+
+        <h2 class="text-3xl font-bold text-green-400">R$ {{ dashboard.totalVendidoHoje }}</h2>
+      </div>
+
+      <div class="bg-gray-900 rounded-2xl p-6">
+        <p class="text-gray-400 mb-2">Vendas hoje</p>
+
+        <h2 class="text-3xl font-bold text-blue-400">
+          {{ dashboard.quantidadeVendasHoje }}
+        </h2>
+      </div>
+
+      <div class="bg-gray-900 rounded-2xl p-6">
+        <p class="text-gray-400 mb-2">Produto mais vendido</p>
+
+        <h2 class="text-2xl font-bold text-purple-400">
+          {{ dashboard.produtoMaisVendido }}
+        </h2>
+      </div>
+
+      <div class="bg-gray-900 rounded-2xl p-6">
+        <p class="text-gray-400 mb-2">Estoque baixo</p>
+
+        <h2 class="text-3xl font-bold text-red-400">
+          {{ dashboard.produtosEstoqueBaixo }}
+        </h2>
+      </div>
+    </div>
+
+    <div class="bg-gray-900 rounded-2xl p-6 mt-8">
+      <h2 class="text-2xl font-bold mb-6">Vendas Mensais</h2>
+
+      <div id="grafico-vendas" class="w-full"></div>
+    </div>
+    <div class="bg-gray-900 rounded-2xl p-6 mt-8">
+      <h2 class="text-2xl font-bold mb-4">🏆 Produtos Mais Vendidos</h2>
+
+      @for (produto of maisVendidos; track produto.produto) {
+        <div class="flex justify-between items-center py-3 border-b border-gray-800">
+          <span>
+            {{ produto.produto }}
+          </span>
+
+          <span class="text-green-400 font-bold">
+            {{ produto.quantidadeVendida }}
+          </span>
+        </div>
+      }
+    </div>
+    <div class="bg-gray-900 rounded-2xl p-6 mt-8">
+      <h2 class="text-2xl font-bold mb-4">⚠ Estoque Baixo</h2>
+
+      @for (produto of estoqueBaixo; track produto.id) {
+        <div class="flex justify-between py-2 border-b border-gray-800">
+          <span>
+            {{ produto.descricao }}
+          </span>
+
+          <span class="text-red-400 font-bold">
+            {{ produto.estoque }}
+          </span>
+        </div>
+      }
+    </div>
+  }
+</div>

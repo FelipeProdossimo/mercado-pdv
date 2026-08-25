@@ -1,0 +1,33 @@
+# =========================
+# .NET (Mercado.Api)
+# =========================
+**/bin/
+**/obj/
+*.user
+.vs/
+
+# =========================
+# Angular / Node (mercado-web)
+# =========================
+mercado-web/node_modules/
+mercado-web/dist/
+mercado-web/.angular/
+npm-debug.log
+yarn-error.log
+
+# =========================
+# IDEs / editors
+# =========================
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/
+
+# =========================
+# System files
+# =========================
+.DS_Store
+Thumbs.db

@@ -1,0 +1,85 @@
+<div class="p-8 text-white">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-4xl font-bold">Produtos</h1>
+
+    <a routerLink="/produtos/novo" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg">
+      Novo Produto
+    </a>
+  </div>
+
+  <div class="bg-gray-900 rounded-2xl overflow-hidden">
+    <table class="w-full">
+      <thead class="bg-gray-800">
+        <tr>
+          <th class="text-left p-4">Ações</th>
+
+          <th class="text-left p-4">Foto</th>
+
+          <th class="text-left p-4">Produto</th>
+
+          <th class="text-left p-4">Código Barras</th>
+
+          <th class="text-left p-4">Estoque</th>
+
+          <th class="text-left p-4">Valor</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (produto of produtos; track produto.id) {
+          <tr class="border-t border-gray-800">
+            <td class="p-4 flex gap-2">
+              <a
+                [routerLink]="['/produtos/editar', produto.id]"
+                class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded"
+              >
+                Editar
+              </a>
+
+              <button
+                class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded"
+                (click)="excluir(produto.id)"
+              >
+                Excluir
+              </button>
+            </td>
+
+            <td class="p-4">
+              @if (produto.imagemUrl) {
+                <img
+                  [src]="'https://localhost:7256' + produto.imagemUrl"
+                  [alt]="produto.descricao"
+                  class="w-16 h-16 rounded-lg object-cover"
+                />
+              } @else {
+                <div class="w-16 h-16 rounded-lg bg-gray-700 flex items-center justify-center">
+                  📦
+                </div>
+              }
+            </td>
+
+            <td class="p-4">
+              {{ produto.descricao }}
+            </td>
+
+            <td class="p-4">
+              {{ produto.codigoBarras }}
+            </td>
+
+            <td class="p-4">
+              @if (produto.estoque <= 5) {
+                <span class="text-red-400 font-bold">
+                  {{ produto.estoque }}
+                </span>
+              } @else {
+                {{ produto.estoque }}
+              }
+            </td>
+
+            <td class="p-4 text-green-400">{{ produto.valor | currency: 'BRL' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

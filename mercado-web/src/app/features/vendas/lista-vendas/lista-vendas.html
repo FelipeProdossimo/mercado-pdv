@@ -1,0 +1,51 @@
+<div class="p-8 text-white">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-4xl font-bold">Histórico de Vendas</h1>
+
+    <a routerLink="/vendas/nova" class="bg-green-600 px-4 py-3 rounded-lg"> Nova Venda </a>
+  </div>
+
+  <div class="bg-gray-900 rounded-2xl overflow-hidden">
+    <table class="w-full">
+      <thead>
+        <tr class="bg-gray-800">
+          <th class="p-4 text-left">ID</th>
+
+          <th class="p-4 text-left">Data</th>
+
+          <th class="p-4 text-left">Total</th>
+
+          <th class="p-4 text-left">Status</th>
+
+          <th class="p-4"></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (venda of vendas; track venda.id) {
+          <tr class="border-t border-gray-800">
+            <td class="p-4">
+              {{ venda.id }}
+            </td>
+
+            <td class="p-4">
+              {{ venda.dataVenda | date:'dd/MM/yyyy HH:mm' }}
+            </td>
+
+            <td class="p-4">{{ venda.valorTotal | currency:'BRL' }}</td>
+
+            <td class="p-4">
+              <span class="px-3 py-1 rounded-full text-xs font-semibold" [ngClass]="rotuloStatus(venda.statusPagamento).classe">
+                {{ rotuloStatus(venda.statusPagamento).texto }}
+              </span>
+            </td>
+
+            <td class="p-4">
+              <a [routerLink]="['/vendas', venda.id]" class="text-blue-400"> Detalhes </a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
