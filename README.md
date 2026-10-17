@@ -1,5 +1,10 @@
 # Mercado — Sistema de PDV (Ponto de Venda)
 
+[![CI](https://github.com/FelipeProdossimo/mercado-pdv/actions/workflows/ci.yml/badge.svg)](https://github.com/FelipeProdossimo/mercado-pdv/actions/workflows/ci.yml)
+![.NET 9](https://img.shields.io/badge/.NET-9-512BD4?logo=dotnet)
+![Angular 20](https://img.shields.io/badge/Angular-20-DD0031?logo=angular)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
+
 Sistema full-stack de ponto de venda para mercado/loja física: controle de produtos e estoque, abertura/fechamento de caixa, vendas com pagamento em dinheiro, cartão ou PIX (integração real com Mercado Pago), dashboard, relatórios e emissão de NFC-e.
 
 - **API**: [`Mercado.Api`](Mercado.Api) — .NET 9, PostgreSQL, JWT
@@ -60,12 +65,58 @@ ng serve
 
 Abra `http://localhost:4200`. O front já está configurado para consumir a API em `http://localhost:5xxx` (ver `src/environments/environment.ts`) e o CORS da API libera `http://localhost:4200`.
 
+## Testes automatizados
+
+O CI do GitHub Actions roda tudo a cada push e pull request: build da API, testes de integração contra um PostgreSQL real, testes do front e build de produção do Angular.
+
+### API (`Mercado.Api.Tests`)
+
+Testes de integração com xUnit e `WebApplicationFactory`. A API sobe inteira em memória, com o mesmo `Program.cs` de produção, apontando para um banco PostgreSQL de teste. O Mercado Pago é trocado por gateways falsos, então nenhum teste faz cobrança real.
+
+O que está coberto:
+
+- **Venda em dinheiro**: baixa de estoque, cálculo do total, venda sem caixa aberto, quantidade zero ou negativa
+- **Transação**: se um item não tem estoque, a baixa dos outros itens é desfeita
+- **PIX**: gerar o QR Code não baixa estoque; confirmação baixa uma única vez, mesmo com várias consultas; PIX expirado cancela sem mexer no estoque
+- **Cartão**: aprovado baixa estoque; recusado não baixa
+- **Caixa**: não abre dois ao mesmo tempo; fechamento soma só vendas aprovadas
+- **Segurança**: endpoints exigem JWT
+
+Para rodar na sua máquina, use um banco **separado** do de desenvolvimento (ele é apagado e recriado a cada execução):
+
+```powershell
+# PowerShell
+$env:MERCADO_TEST_CONNECTION = "Host=localhost;Port=5432;Database=mercado_test;Username=SEU_USUARIO;Password=SUA_SENHA"
+dotnet test
+```
+
+### Front-end (`mercado-web`)
+
+Testes com Jasmine/Karma: carrinho da venda (soma de itens, limite de estoque, remoção), interceptor de autenticação, login/logout e criação de todas as telas.
+
+```bash
+cd mercado-web
+npm test          # abre o Chrome e fica observando alterações
+npm run test:ci   # roda uma vez, sem janela, com cobertura
+```
+
+## Decisões técnicas
+
+- **Estoque só baixa quando o pagamento é confirmado.** No PIX e no cartão a venda nasce `Pendente` e só vira `Aprovado` depois da confirmação do Mercado Pago. Assim, um QR Code abandonado não "prende" mercadoria.
+- **Baixa de estoque condicional no banco.** A baixa usa `UPDATE ... WHERE Estoque >= quantidade`, então dois caixas vendendo o último item ao mesmo tempo não deixam o estoque negativo.
+- **Consulta de status idempotente.** Depois que o PIX é aprovado, recusado ou cancelado, a API não consulta o Mercado Pago de novo e não reprocessa a baixa de estoque.
+- **Número do cartão nunca passa pela API.** O cartão é tokenizado no navegador pelo SDK do Mercado Pago, e o back-end recebe só o token.
+- **Segredos fora do repositório.** Connection string, chave JWT e tokens ficam em User Secrets ou variáveis de ambiente. O `appsettings.json` versionado só tem placeholders.
+- **Gateways de pagamento atrás de interfaces** (`IPagamentoPixService`, `IPagamentoCartaoService`), o que permite testar todo o fluxo de venda sem chamar o Mercado Pago.
+
 ## Estrutura do repositório
 
 ```
 Mercado/
-├── Mercado.Api/     # API .NET (controllers, services, entities, migrations)
-└── mercado-web/     # Front Angular (features, core, layout)
+├── Mercado.Api/          # API .NET (controllers, services, entities, migrations)
+├── Mercado.Api.Tests/    # Testes de integração da API (xUnit + PostgreSQL)
+├── mercado-web/          # Front Angular (features, core, layout)
+└── .github/workflows/    # CI no GitHub Actions
 ```
 
 ## Documentação adicional
