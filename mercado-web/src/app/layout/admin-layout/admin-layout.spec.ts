@@ -21,4 +21,14 @@ describe('AdminLayout', () => {
   it('deve criar a tela', () => {
     expect(component).toBeTruthy();
   });
+
+  it('começa com o menu fechado e abre/fecha pelo botão', () => {
+    expect(component.menuAberto()).toBeFalse();
+
+    component.alternarMenu();
+    expect(component.menuAberto()).toBeTrue();
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    expect(component.menuAberto()).toBeFalse();
+  });
 });

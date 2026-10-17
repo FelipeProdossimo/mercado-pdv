@@ -1,225 +1,244 @@
-<div class="min-h-screen bg-gray-950 text-white p-8">
-  @if (mensagem) {
-    <div
-      class="fixed top-6 right-6 z-[60] rounded-xl px-6 py-4 shadow-2xl font-semibold text-lg max-w-md"
-      [class.bg-green-700]="mensagem.tipo === 'sucesso'"
-      [class.bg-red-700]="mensagem.tipo === 'erro'"
-    >
-      {{ mensagem.texto }}
-    </div>
-  }
+@if (mensagem) {
+  <div
+    class="fixed top-20 right-4 left-4 sm:left-auto z-[60] flex items-center gap-3 rounded-2xl px-5 py-4 shadow-2xl font-semibold sm:max-w-md"
+    [class.bg-marca]="mensagem.tipo === 'sucesso'"
+    [class.text-slate-950]="mensagem.tipo === 'sucesso'"
+    [class.bg-red-600]="mensagem.tipo === 'erro'"
+    role="status"
+  >
+    <span class="material-icons">{{ mensagem.tipo === 'sucesso' ? 'check_circle' : 'error' }}</span>
+    {{ mensagem.texto }}
+  </div>
+}
 
-  <div class="grid grid-cols-3 gap-6">
-    <div class="col-span-2">
-      <div class="bg-gray-900 rounded-2xl p-5 mb-6 relative">
-        <label for="pesquisaProduto" class="text-sm text-gray-400 font-medium mb-2 block">
-          Escaneie o código de barras ou digite o nome do produto
-        </label>
-        <div class="grid grid-cols-12 gap-4">
-          <div class="col-span-8 relative">
-            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-xl text-gray-500">🔎</span>
-            <input
-              id="pesquisaProduto"
-              #pesquisa
-              [(ngModel)]="textoPesquisa"
-              (input)="pesquisarProdutos()"
-              (keydown.enter)="confirmarBusca()"
-              autocomplete="off"
-              placeholder="Código de barras ou nome do produto..."
-              class="w-full bg-gray-800 rounded-xl p-4 pl-12 text-lg border border-gray-700 outline-none focus:border-blue-500"
-            />
-            @if (resultadosPesquisa.length) {
-              <div
-                class="absolute left-0 right-0 mt-2 bg-gray-800 rounded-xl border border-gray-700 shadow-2xl overflow-hidden z-50 max-h-96 overflow-y-auto"
-              >
-                @for (produto of resultadosPesquisa; track produto.id) {
-                  <button
-                    type="button"
-                    (click)="selecionarProduto(produto)"
-                    class="w-full flex justify-between items-center px-5 py-4 hover:bg-gray-700 transition text-left"
-                  >
-                    <div>
-                      <div class="font-semibold">
-                        {{ produto.descricao }}
-                      </div>
-                      <div class="text-sm text-gray-400 font-mono">
-                        {{ produto.codigoBarras }}
-                      </div>
-                    </div>
-                    <div class="text-right">
-                      <div class="text-green-400 font-bold">{{ produto.valor | currency:'BRL' }}</div>
-                      <div class="text-xs" [class.text-red-400]="produto.estoque === 0" [class.text-gray-400]="produto.estoque > 0">
-                        Estoque {{ produto.estoque }}
-                      </div>
-                    </div>
-                  </button>
-                }
-              </div>
-            }
-          </div>
-
-          <div class="col-span-2">
-            <label class="text-xs text-gray-500 block mb-1 text-center">Qtd</label>
-            <input
-              type="number"
-              [(ngModel)]="quantidade"
-              min="1"
-              class="w-full bg-gray-800 rounded-xl p-4 border border-gray-700 text-center text-lg"
-            />
-          </div>
-          <button
-            (click)="confirmarBusca()"
-            title="Adicionar (Enter)"
-            class="col-span-2 bg-green-600 hover:bg-green-700 rounded-xl font-bold transition text-2xl"
+<div class="h-full flex flex-col lg:flex-row gap-3 md:gap-4 p-3 md:p-4">
+  <!-- Coluna principal: leitura do produto + itens -->
+  <section class="flex-1 min-h-0 min-w-0 flex flex-col gap-3 md:gap-4">
+    <div class="card p-3 md:p-4">
+      <div class="flex gap-2 md:gap-3">
+        <div class="relative flex-1">
+          <span
+            class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-suave !text-2xl pointer-events-none"
+            >qr_code_scanner</span
           >
-            +
-          </button>
+          <input
+            id="pesquisaProduto"
+            #pesquisa
+            [(ngModel)]="textoPesquisa"
+            (input)="pesquisarProdutos()"
+            (keydown.enter)="confirmarBusca()"
+            autocomplete="off"
+            aria-label="Código de barras ou nome do produto"
+            placeholder="Código de barras ou nome do produto..."
+            class="campo !py-4 !pl-14 text-lg"
+          />
+          @if (resultadosPesquisa.length) {
+            <div
+              class="absolute left-0 right-0 mt-2 card shadow-2xl overflow-hidden z-50 max-h-[60dvh] overflow-y-auto"
+            >
+              @for (produto of resultadosPesquisa; track produto.id) {
+                <button
+                  type="button"
+                  (click)="selecionarProduto(produto)"
+                  class="w-full flex justify-between items-center gap-4 px-5 py-4 hover:bg-painel-2 transition text-left border-b border-borda last:border-0"
+                >
+                  <div class="min-w-0">
+                    <div class="font-semibold truncate">{{ produto.descricao }}</div>
+                    <div class="text-sm text-suave font-mono">{{ produto.codigoBarras }}</div>
+                  </div>
+                  <div class="text-right shrink-0">
+                    <div class="text-marca font-bold">{{ produto.valor | currency: 'BRL' }}</div>
+                    <div
+                      class="text-xs"
+                      [class.text-red-400]="produto.estoque === 0"
+                      [class.text-suave]="produto.estoque > 0"
+                    >
+                      Estoque {{ produto.estoque }}
+                    </div>
+                  </div>
+                </button>
+              }
+            </div>
+          }
         </div>
+
+        <div class="w-20 md:w-24 shrink-0">
+          <input
+            type="number"
+            [(ngModel)]="quantidade"
+            min="1"
+            aria-label="Quantidade"
+            title="Quantidade"
+            class="campo !py-4 text-center text-lg font-bold"
+          />
+        </div>
+
+        <button
+          type="button"
+          (click)="confirmarBusca()"
+          title="Adicionar (Enter)"
+          aria-label="Adicionar item"
+          class="btn-primario !px-5 md:!px-7 !rounded-xl text-lg"
+        >
+          <span class="material-icons !text-3xl">add_shopping_cart</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="card flex-1 min-h-0 flex flex-col overflow-hidden">
+      <div class="flex items-center justify-between px-4 md:px-5 py-3 border-b border-borda">
+        <h2 class="font-bold text-lg">Itens da venda</h2>
+        <span class="selo bg-painel-2 text-suave">{{ itens.length }} produto(s) · {{ totalPecas }} peça(s)</span>
       </div>
 
-      <!-- Lista -->
-      <div class="bg-gray-900 rounded-2xl p-6">
-        <h2 class="text-2xl font-bold mb-6">Itens da Venda ({{ itens.length }})</h2>
-
+      <div class="flex-1 min-h-0 overflow-y-auto">
         @if (!itens.length) {
-          <div class="text-center py-16 text-gray-500">
-            <div class="text-5xl mb-4">🛒</div>
-            <p class="text-lg">Nenhum item na venda ainda</p>
-            <p class="text-sm mt-1">Escaneie um produto para começar</p>
+          <div class="h-full min-h-48 flex flex-col items-center justify-center text-center p-8 text-suave">
+            <span class="material-icons !text-6xl text-borda mb-3">shopping_cart</span>
+            <p class="text-lg font-medium text-slate-300">Caixa livre</p>
+            <p class="text-sm mt-1">Passe um produto no leitor ou digite o nome para começar</p>
           </div>
         }
 
-        @for (item of itens; track item.produtoId) {
+        @for (item of itens; track item.produtoId; let i = $index) {
           <div
-            class="flex justify-between items-center border-b border-gray-800 py-4 rounded-lg transition-colors duration-500 px-3 -mx-3"
-            [class.bg-green-900\/40]="itemDestacadoId === item.produtoId"
+            class="flex items-center gap-3 md:gap-4 px-4 md:px-5 py-3 border-b border-borda transition-colors duration-500"
+            [ngClass]="{ 'bg-marca/15': itemDestacadoId === item.produtoId }"
           >
-            <div class="min-w-0">
-              <div class="font-semibold text-xl truncate">
-                {{ item.descricao }}
+            <span class="hidden sm:block w-6 text-suave font-mono text-sm tabular-nums">{{ i + 1 }}</span>
+
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold md:text-lg truncate">{{ item.descricao }}</div>
+              <div class="text-suave text-sm">
+                {{ item.valorUnitario | currency: 'BRL' }} / un.
+                <span class="hidden md:inline font-mono"> · {{ item.codigoBarras }}</span>
               </div>
-              <div class="text-gray-500 text-sm font-mono">{{ item.codigoBarras }}</div>
-              <div class="text-gray-500 text-sm">{{ item.valorUnitario | currency:'BRL' }} / un.</div>
             </div>
 
-            <div class="flex items-center gap-6 shrink-0">
-              <div class="flex items-center gap-2 bg-gray-800 rounded-xl p-1">
-                <button
-                  (click)="alterarQuantidade(item, -1)"
-                  class="w-9 h-9 rounded-lg bg-gray-700 hover:bg-gray-600 transition font-bold text-lg"
-                >
-                  −
-                </button>
-                <span class="w-10 text-center font-semibold text-lg">{{ item.quantidade }}</span>
-                <button
-                  (click)="alterarQuantidade(item, 1)"
-                  [disabled]="item.quantidade >= estoqueDisponivel(item)"
-                  class="w-9 h-9 rounded-lg bg-gray-700 hover:bg-gray-600 transition font-bold text-lg disabled:opacity-30 disabled:cursor-not-allowed"
-                >
-                  +
-                </button>
-              </div>
-
-              <span class="text-2xl font-bold text-green-400 w-32 text-right">
-                {{ item.total | currency:'BRL' }}
-              </span>
-
+            <div class="flex items-center bg-painel-2 rounded-xl border border-borda shrink-0">
               <button
-                (click)="removerItem(item)"
-                title="Remover item"
-                class="w-12 h-12 rounded-xl bg-red-900 hover:bg-red-700 transition"
+                type="button"
+                (click)="alterarQuantidade(item, -1)"
+                aria-label="Diminuir quantidade"
+                class="w-10 h-10 md:w-11 md:h-11 grid place-items-center rounded-l-xl hover:bg-borda transition"
               >
-                🗑
+                <span class="material-icons">remove</span>
+              </button>
+              <span class="w-9 text-center font-bold tabular-nums">{{ item.quantidade }}</span>
+              <button
+                type="button"
+                (click)="alterarQuantidade(item, 1)"
+                [disabled]="item.quantidade >= estoqueDisponivel(item)"
+                aria-label="Aumentar quantidade"
+                class="w-10 h-10 md:w-11 md:h-11 grid place-items-center rounded-r-xl hover:bg-borda transition disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <span class="material-icons">add</span>
               </button>
             </div>
+
+            <span class="w-24 md:w-32 text-right text-lg md:text-xl font-bold text-marca tabular-nums shrink-0">
+              {{ item.total | currency: 'BRL' }}
+            </span>
+
+            <button
+              type="button"
+              (click)="removerItem(item)"
+              title="Remover item"
+              aria-label="Remover item"
+              class="w-10 h-10 md:w-11 md:h-11 grid place-items-center rounded-xl text-red-300 hover:bg-red-500/20 transition shrink-0"
+            >
+              <span class="material-icons">delete_outline</span>
+            </button>
           </div>
         }
       </div>
     </div>
+  </section>
 
-    <div>
-      <div class="bg-gray-900 rounded-2xl p-8 sticky top-8">
-        <div class="text-center">
-          <p class="text-gray-400 uppercase tracking-widest">Total da Venda</p>
-          <div class="text-6xl font-black text-green-400 mt-5">{{ valorTotal | currency:'BRL' }}</div>
-          <div class="text-gray-400 mt-5">{{ itens.length }} produto(s) · {{ totalPecas }} peça(s)</div>
+  <!-- Resumo: barra embaixo no tablet em pé, coluna lateral a partir de 1024px -->
+  <aside class="shrink-0 lg:w-[360px] xl:w-[400px]">
+    <div class="card p-4 md:p-5 lg:p-6 lg:h-full flex flex-row lg:flex-col items-center lg:items-stretch gap-4">
+      <div class="flex-1 lg:flex-none min-w-0 lg:text-center lg:py-6 lg:rounded-2xl lg:bg-gradient-to-b lg:from-marca/15 lg:to-transparent">
+        <p class="text-xs md:text-sm text-suave uppercase tracking-widest font-semibold">Total a pagar</p>
+        <div class="text-4xl md:text-5xl xl:text-6xl font-black text-marca tabular-nums mt-1 lg:mt-3 truncate">
+          {{ valorTotal | currency: 'BRL' }}
         </div>
-        <button
-          (click)="popupFormaPagamento = true"
-          [disabled]="itens.length === 0 || enviando"
-          class="btn-primary w-full py-6 text-2xl mt-10 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {{ enviando ? 'Processando...' : 'Finalizar Venda' }}
-        </button>
-        <p class="text-center text-gray-600 text-xs mt-4">
-          F1 Dinheiro · F2 PIX · F3 Débito · F4 Crédito
-        </p>
+        <div class="hidden lg:block text-suave mt-3">
+          {{ itens.length }} produto(s) · {{ totalPecas }} peça(s)
+        </div>
       </div>
+
+      <div class="hidden lg:grid grid-cols-2 gap-2 mt-auto">
+        @for (opcao of opcoesPagamento; track opcao.id) {
+          <button
+            type="button"
+            (click)="selecionarPagamento(opcao.id)"
+            [disabled]="itens.length === 0 || enviando"
+            class="btn-secundario !py-3 !justify-start"
+          >
+            <span class="tecla">{{ opcao.tecla }}</span>
+            {{ opcao.texto }}
+          </button>
+        }
+      </div>
+
+      <button
+        type="button"
+        (click)="popupFormaPagamento = true"
+        [disabled]="itens.length === 0 || enviando"
+        class="btn-primario shrink-0 !py-4 lg:!py-5 px-6 text-lg lg:text-xl"
+      >
+        <span class="material-icons">payments</span>
+        {{ enviando ? 'Processando...' : 'Finalizar venda' }}
+      </button>
     </div>
-  </div>
+  </aside>
 </div>
 
 @if (popupFormaPagamento) {
-  <div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-    <div class="bg-gray-900 rounded-3xl w-[850px] p-10 shadow-2xl">
-      <div class="text-center mb-8">
-        <h2 class="text-4xl font-bold">Forma de Pagamento</h2>
-        <div class="mt-6">
-          <div class="text-gray-400">TOTAL</div>
-          <div class="text-6xl font-black text-green-400 mt-2">{{ valorTotal | currency:'BRL' }}</div>
+  <div class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="card w-full max-w-2xl p-5 md:p-8 shadow-2xl max-h-[95dvh] overflow-y-auto">
+      <div class="text-center mb-6">
+        <h2 class="text-2xl md:text-3xl font-bold">Forma de pagamento</h2>
+        <div class="text-5xl md:text-6xl font-black text-marca mt-3 tabular-nums">
+          {{ valorTotal | currency: 'BRL' }}
         </div>
       </div>
-      <div class="grid grid-cols-2 gap-6">
-        <button
-          (click)="selecionarPagamento(1)"
-          class="bg-green-700 hover:scale-105 hover:bg-green-600 transition rounded-3xl h-52 flex flex-col justify-center items-center"
-        >
-          <div class="text-7xl">💵</div>
-          <div class="text-3xl font-bold mt-4">DINHEIRO</div>
-          <div class="text-gray-200 mt-3">F1</div>
-        </button>
-        <button
-          (click)="selecionarPagamento(2)"
-          class="bg-purple-700 hover:scale-105 hover:bg-purple-600 transition rounded-3xl h-52 flex flex-col justify-center items-center"
-        >
-          <div class="text-7xl">⚡</div>
-          <div class="text-3xl font-bold mt-4">PIX</div>
-          <div class="text-gray-200 mt-3">F2</div>
-        </button>
-        <button
-          (click)="selecionarPagamento(3)"
-          class="bg-blue-700 hover:scale-105 hover:bg-blue-600 transition rounded-3xl h-52 flex flex-col justify-center items-center"
-        >
-          <div class="text-7xl">💳</div>
-          <div class="text-3xl font-bold mt-4">DÉBITO</div>
-          <div class="text-gray-200 mt-3">F3</div>
-        </button>
-        <button
-          (click)="selecionarPagamento(4)"
-          class="bg-orange-600 hover:scale-105 hover:bg-orange-500 transition rounded-3xl h-52 flex flex-col justify-center items-center"
-        >
-          <div class="text-7xl">💳</div>
-          <div class="text-3xl font-bold mt-4">CRÉDITO</div>
-          <div class="text-gray-200 mt-3">F4</div>
-        </button>
+      <div class="grid grid-cols-2 gap-3 md:gap-4">
+        @for (opcao of opcoesPagamento; track opcao.id) {
+          <button
+            type="button"
+            (click)="selecionarPagamento(opcao.id)"
+            class="relative rounded-2xl h-32 md:h-40 flex flex-col justify-center items-center gap-2 border-2 transition hover:-translate-y-0.5 {{ opcao.classe }}"
+          >
+            <span class="material-icons !text-5xl md:!text-6xl">{{ opcao.icone }}</span>
+            <span class="text-xl md:text-2xl font-extrabold tracking-wide">{{ opcao.texto }}</span>
+            <span class="tecla absolute top-3 right-3">{{ opcao.tecla }}</span>
+          </button>
+        }
       </div>
       <button
+        type="button"
         (click)="popupFormaPagamento = false"
-        class="mt-8 w-full rounded-2xl bg-gray-700 hover:bg-gray-600 py-5 text-xl"
+        class="btn-secundario mt-5 w-full !py-4 text-lg"
       >
-        Cancelar (ESC)
+        Cancelar <span class="tecla">ESC</span>
       </button>
     </div>
   </div>
 }
 
 @if (mostrandoQrPix && pagamentoPix) {
-  <div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-    <div class="bg-gray-900 rounded-3xl w-[520px] p-10 shadow-2xl text-center">
-      <h2 class="text-3xl font-bold">Pagamento por PIX</h2>
-      <div class="text-5xl font-black text-green-400 mt-3">{{ pagamentoPix.valorTotal | currency:'BRL' }}</div>
+  <div class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="card w-full max-w-md p-6 md:p-8 shadow-2xl text-center max-h-[95dvh] overflow-y-auto">
+      <div class="inline-flex items-center gap-2 selo bg-teal-500/15 text-teal-300 !text-sm">
+        <span class="material-icons">bolt</span> Pagamento por PIX
+      </div>
+      <div class="text-5xl font-black text-marca mt-3 tabular-nums">
+        {{ pagamentoPix.valorTotal | currency: 'BRL' }}
+      </div>
 
-      <div class="bg-white rounded-2xl p-4 mt-6 mx-auto w-fit">
+      <div class="bg-white rounded-2xl p-4 mt-6 mx-auto w-fit shadow-lg shadow-marca/10">
         <img
           [src]="'data:image/png;base64,' + pagamentoPix.qrCodeBase64"
           alt="QR Code PIX"
@@ -227,68 +246,64 @@
         />
       </div>
 
-      <p class="text-gray-400 mt-5">Peça para o cliente escanear com o app do banco</p>
+      <p class="text-suave mt-5">Peça para o cliente escanear com o app do banco</p>
 
       <button
+        type="button"
         (click)="copiarCodigoPix()"
-        class="mt-4 w-full rounded-xl bg-gray-800 hover:bg-gray-700 border border-gray-700 py-3 text-sm font-mono truncate px-4 transition"
+        class="mt-3 w-full flex items-center gap-2 rounded-xl bg-painel-2 hover:bg-borda border border-borda py-3 px-4 text-sm font-mono transition"
         title="Clique para copiar o código PIX (copia e cola)"
       >
-        📋 {{ pagamentoPix.qrCode }}
+        <span class="material-icons text-suave">content_copy</span>
+        <span class="truncate">{{ pagamentoPix.qrCode }}</span>
       </button>
 
-      <div class="flex items-center justify-center gap-3 mt-6 text-gray-400">
-        <div class="w-3 h-3 rounded-full bg-yellow-400 animate-pulse"></div>
+      <div class="flex items-center justify-center gap-3 mt-6 text-slate-300">
+        <span class="w-3 h-3 rounded-full bg-destaque animate-pulse"></span>
         <span>Aguardando confirmação do pagamento...</span>
       </div>
 
-      <div class="text-gray-500 text-sm mt-2">Expira em {{ contagemPixFormatada }}</div>
+      <div class="text-suave text-sm mt-1 tabular-nums">Expira em {{ contagemPixFormatada }}</div>
 
-      <button
-        (click)="cancelarPix()"
-        class="mt-8 w-full rounded-2xl bg-gray-700 hover:bg-gray-600 py-4 text-lg"
-      >
-        Cancelar (ESC)
+      <button type="button" (click)="cancelarPix()" class="btn-secundario mt-6 w-full !py-4 text-lg">
+        Cancelar <span class="tecla">ESC</span>
       </button>
     </div>
   </div>
 }
 
 @if (mostrandoFormCartao) {
-  <div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-    <div class="bg-gray-900 rounded-3xl w-[520px] p-10 shadow-2xl">
+  <div class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="card w-full max-w-lg p-6 md:p-8 shadow-2xl max-h-[95dvh] overflow-y-auto">
       <div class="text-center mb-6">
-        <h2 class="text-3xl font-bold">
-          {{ formaPagamento === FormaPagamento.CartaoDebito ? 'Pagamento por Débito' : 'Pagamento por Crédito' }}
+        <h2 class="text-2xl md:text-3xl font-bold">
+          {{ formaPagamento === FormaPagamento.CartaoDebito ? 'Pagamento por débito' : 'Pagamento por crédito' }}
         </h2>
-        <div class="text-5xl font-black text-green-400 mt-3">{{ valorTotal | currency:'BRL' }}</div>
+        <div class="text-5xl font-black text-marca mt-3 tabular-nums">{{ valorTotal | currency: 'BRL' }}</div>
       </div>
 
       <form id="form-cartao" class="space-y-4">
-        <div id="form-cartao__cardNumber" class="bg-gray-800 rounded-xl p-4 border border-gray-700 h-[52px]"></div>
+        <div id="form-cartao__cardNumber" class="campo h-[52px]"></div>
 
         <div class="grid grid-cols-2 gap-4">
-          <div id="form-cartao__expirationDate" class="bg-gray-800 rounded-xl p-4 border border-gray-700 h-[52px]"></div>
-          <div id="form-cartao__securityCode" class="bg-gray-800 rounded-xl p-4 border border-gray-700 h-[52px]"></div>
+          <div id="form-cartao__expirationDate" class="campo h-[52px]"></div>
+          <div id="form-cartao__securityCode" class="campo h-[52px]"></div>
         </div>
 
         <input
           id="form-cartao__cardholderName"
           autocomplete="off"
           placeholder="Nome impresso no cartão"
-          class="w-full bg-gray-800 rounded-xl p-4 border border-gray-700 outline-none focus:border-blue-500"
+          class="campo"
         />
 
         <div class="grid grid-cols-2 gap-4">
-          <select
-            id="form-cartao__identificationType"
-            class="w-full bg-gray-800 rounded-xl p-4 border border-gray-700 outline-none"
-          ></select>
+          <select id="form-cartao__identificationType" class="campo"></select>
           <input
             id="form-cartao__identificationNumber"
             autocomplete="off"
             placeholder="CPF do cliente"
-            class="w-full bg-gray-800 rounded-xl p-4 border border-gray-700 outline-none focus:border-blue-500"
+            class="campo"
           />
         </div>
 
@@ -296,35 +311,22 @@
           id="form-cartao__cardholderEmail"
           autocomplete="off"
           placeholder="E-mail (opcional)"
-          class="w-full bg-gray-800 rounded-xl p-4 border border-gray-700 outline-none focus:border-blue-500"
+          class="campo"
         />
 
-        <select
-          id="form-cartao__issuer"
-          class="w-full bg-gray-800 rounded-xl p-4 border border-gray-700 outline-none"
-        ></select>
+        <select id="form-cartao__issuer" class="campo"></select>
 
         @if (exibeParcelasCartao) {
-          <select
-            id="form-cartao__installments"
-            class="w-full bg-gray-800 rounded-xl p-4 border border-gray-700 outline-none"
-          ></select>
+          <select id="form-cartao__installments" class="campo"></select>
         }
 
-        <button
-          type="submit"
-          [disabled]="enviando"
-          class="btn-primary w-full py-5 text-xl mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {{ enviando ? 'Processando...' : 'Confirmar Pagamento' }}
+        <button type="submit" [disabled]="enviando" class="btn-primario w-full !py-4 text-lg mt-2">
+          {{ enviando ? 'Processando...' : 'Confirmar pagamento' }}
         </button>
       </form>
 
-      <button
-        (click)="fecharFormCartao()"
-        class="mt-4 w-full rounded-2xl bg-gray-700 hover:bg-gray-600 py-4 text-lg"
-      >
-        Cancelar (ESC)
+      <button type="button" (click)="fecharFormCartao()" class="btn-secundario mt-3 w-full !py-4 text-lg">
+        Cancelar <span class="tecla">ESC</span>
       </button>
     </div>
   </div>

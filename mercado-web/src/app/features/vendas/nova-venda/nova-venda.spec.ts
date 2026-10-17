@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NovaVenda } from './nova-venda';
 import { Produto } from '../../../core/models/produto.model';
+import { FormaPagamento } from '../../../core/enums/forma-pagamento.model';
 import { providersTeste } from '../../../../testing/providers-teste';
 
 describe('NovaVenda (carrinho)', () => {
@@ -73,5 +74,22 @@ describe('NovaVenda (carrinho)', () => {
     component.alterarQuantidade(component.itens[0], +1);
 
     expect(component.itens[0].quantidade).toBe(3);
+  });
+
+  it('F1 a F4 finalizam direto com a forma de pagamento da tecla', () => {
+    const selecionar = spyOn(component, 'selecionarPagamento');
+    adicionar(feijao, 1);
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'F2' }));
+
+    expect(selecionar).toHaveBeenCalledOnceWith(FormaPagamento.Pix);
+  });
+
+  it('atalho de pagamento não faz nada com o carrinho vazio', () => {
+    const selecionar = spyOn(component, 'selecionarPagamento');
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'F1' }));
+
+    expect(selecionar).not.toHaveBeenCalled();
   });
 });

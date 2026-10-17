@@ -1,25 +1,94 @@
-<div class="min-h-screen flex bg-gray-950 text-white">
-  <aside class="w-64 bg-gray-900 border-r border-gray-800">
-    <div class="p-6 text-2xl font-bold">FOLHA VERDE 🚀</div>
+<div class="h-dvh flex flex-col bg-fundo text-slate-100">
+  <header
+    class="h-16 shrink-0 flex items-center gap-2 px-2 sm:px-4 bg-painel/90 backdrop-blur border-b border-borda z-30"
+  >
+    <button
+      type="button"
+      (click)="alternarMenu()"
+      class="btn-icone"
+      aria-label="Abrir menu"
+      [attr.aria-expanded]="menuAberto()"
+    >
+      <span class="material-icons">menu</span>
+    </button>
 
-    <nav class="p-4">
-      <a routerLink="/dashboard" class="block p-3 rounded-lg hover:bg-gray-800 mb-2">
-        📊 Dashboard
+    <a routerLink="/dashboard" class="flex items-center gap-2.5 mr-auto">
+      <span
+        class="w-9 h-9 rounded-xl bg-gradient-to-br from-marca to-teal-500 grid place-items-center text-slate-950 font-black"
+      >
+        FV
+      </span>
+      <span class="hidden sm:flex items-baseline gap-2">
+        <span class="font-extrabold text-lg tracking-tight">Folha Verde</span>
+        <span class="text-xs font-bold text-marca uppercase tracking-widest">PDV</span>
+      </span>
+    </a>
+
+    <div class="hidden md:flex flex-col items-end leading-tight mr-2">
+      <span class="text-lg font-bold tabular-nums">{{ agora() | date: 'HH:mm' }}</span>
+      <span class="text-xs text-suave first-letter:uppercase">{{ agora() | date: 'EEEE, d MMM' }}</span>
+    </div>
+
+    @if (!naTelaDeVenda()) {
+      <a routerLink="/vendas/nova" class="btn-primario">
+        <span class="material-icons">point_of_sale</span>
+        <span class="hidden sm:inline">Nova venda</span>
       </a>
+    }
 
-      <a routerLink="/produtos" class="block p-3 rounded-lg hover:bg-gray-800 mb-2">
-        📦 Produtos
-      </a>
+    <button type="button" (click)="sair()" class="btn-icone" title="Sair" aria-label="Sair">
+      <span class="material-icons">logout</span>
+    </button>
+  </header>
 
-      <a routerLink="/vendas" class="block p-3 rounded-lg hover:bg-gray-800 mb-2"> 🛒 Vendas </a>
-
-      <a routerLink="/relatorios" class="block p-3 rounded-lg hover:bg-gray-800 mb-2">
-        📑 Relatórios
-      </a>
-    </nav>
-  </aside>
-
-  <main class="flex-1">
+  <main class="flex-1 min-h-0 overflow-y-auto">
     <router-outlet />
   </main>
+
+  <!-- Menu lateral: gaveta que abre por cima do conteúdo e fecha ao navegar -->
+  <div
+    class="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-200"
+    [class.opacity-0]="!menuAberto()"
+    [class.pointer-events-none]="!menuAberto()"
+    (click)="fecharMenu()"
+    aria-hidden="true"
+  ></div>
+
+  <aside
+    class="fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] flex flex-col bg-painel border-r border-borda shadow-2xl transition-transform duration-200"
+    [class.-translate-x-full]="!menuAberto()"
+    [attr.inert]="menuAberto() ? null : ''"
+  >
+    <div class="h-16 flex items-center justify-between px-4 border-b border-borda">
+      <span class="font-extrabold text-lg">Menu</span>
+      <button type="button" (click)="fecharMenu()" class="btn-icone" aria-label="Fechar menu">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <nav class="flex-1 p-3 space-y-1">
+      @for (item of itensMenu; track item.rota) {
+        <a
+          [routerLink]="item.rota"
+          routerLinkActive="!bg-marca/15 !text-marca-clara"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="flex items-center gap-3 px-4 py-3.5 rounded-xl text-slate-300 font-medium hover:bg-painel-2 transition-colors"
+        >
+          <span class="material-icons">{{ item.icone }}</span>
+          {{ item.texto }}
+        </a>
+      }
+    </nav>
+
+    <div class="p-3 border-t border-borda">
+      <button
+        type="button"
+        (click)="sair()"
+        class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-slate-300 hover:bg-red-500/15 hover:text-red-300 transition-colors"
+      >
+        <span class="material-icons">logout</span>
+        Sair
+      </button>
+    </div>
+  </aside>
 </div>

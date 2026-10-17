@@ -1,85 +1,106 @@
-<div class="p-8 text-white">
-  <div class="flex justify-between items-center mb-8">
-    <h1 class="text-4xl font-bold">Produtos</h1>
+<div class="p-4 md:p-6 xl:p-8 max-w-[1600px] mx-auto">
+  <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+    <div>
+      <h1 class="titulo-pagina">Produtos</h1>
+      <p class="text-suave mt-1">{{ produtos.length }} produto(s) cadastrado(s)</p>
+    </div>
 
-    <a routerLink="/produtos/novo" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg">
-      Novo Produto
+    <a routerLink="/produtos/novo" class="btn-primario">
+      <span class="material-icons">add</span>
+      Novo produto
     </a>
   </div>
 
-  <div class="bg-gray-900 rounded-2xl overflow-hidden">
-    <table class="w-full">
-      <thead class="bg-gray-800">
-        <tr>
-          <th class="text-left p-4">Ações</th>
+  <div class="relative mb-4 max-w-md">
+    <span class="material-icons absolute left-3.5 top-1/2 -translate-y-1/2 text-suave pointer-events-none">search</span>
+    <input
+      [value]="filtro"
+      (input)="filtro = $any($event.target).value"
+      placeholder="Buscar por nome ou código de barras"
+      aria-label="Buscar produto"
+      class="campo !pl-11"
+    />
+  </div>
 
-          <th class="text-left p-4">Foto</th>
-
-          <th class="text-left p-4">Produto</th>
-
-          <th class="text-left p-4">Código Barras</th>
-
-          <th class="text-left p-4">Estoque</th>
-
-          <th class="text-left p-4">Valor</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        @for (produto of produtos; track produto.id) {
-          <tr class="border-t border-gray-800">
-            <td class="p-4 flex gap-2">
-              <a
-                [routerLink]="['/produtos/editar', produto.id]"
-                class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded"
-              >
-                Editar
-              </a>
-
-              <button
-                class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded"
-                (click)="excluir(produto.id)"
-              >
-                Excluir
-              </button>
-            </td>
-
-            <td class="p-4">
-              @if (produto.imagemUrl) {
-                <img
-                  [src]="'https://localhost:7256' + produto.imagemUrl"
-                  [alt]="produto.descricao"
-                  class="w-16 h-16 rounded-lg object-cover"
-                />
-              } @else {
-                <div class="w-16 h-16 rounded-lg bg-gray-700 flex items-center justify-center">
-                  📦
-                </div>
-              }
-            </td>
-
-            <td class="p-4">
-              {{ produto.descricao }}
-            </td>
-
-            <td class="p-4">
-              {{ produto.codigoBarras }}
-            </td>
-
-            <td class="p-4">
-              @if (produto.estoque <= 5) {
-                <span class="text-red-400 font-bold">
-                  {{ produto.estoque }}
-                </span>
-              } @else {
-                {{ produto.estoque }}
-              }
-            </td>
-
-            <td class="p-4 text-green-400">{{ produto.valor | currency: 'BRL' }}</td>
+  <div class="card overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="tabela">
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th class="hidden md:table-cell">Código de barras</th>
+            <th class="text-right">Estoque</th>
+            <th class="text-right">Preço</th>
+            <th class="w-28"><span class="sr-only">Ações</span></th>
           </tr>
-        }
-      </tbody>
-    </table>
+        </thead>
+
+        <tbody>
+          @for (produto of produtosFiltrados; track produto.id) {
+            <tr>
+              <td>
+                <div class="flex items-center gap-3 min-w-0">
+                  @if (produto.imagemUrl) {
+                    <img
+                      [src]="'https://localhost:7256' + produto.imagemUrl"
+                      [alt]="produto.descricao"
+                      class="w-12 h-12 rounded-xl object-cover bg-white shrink-0"
+                    />
+                  } @else {
+                    <div class="w-12 h-12 rounded-xl bg-painel-2 grid place-items-center text-suave shrink-0">
+                      <span class="material-icons">inventory_2</span>
+                    </div>
+                  }
+                  <div class="min-w-0">
+                    <div class="font-semibold truncate">{{ produto.descricao }}</div>
+                    <div class="text-xs text-suave font-mono md:hidden">{{ produto.codigoBarras }}</div>
+                  </div>
+                </div>
+              </td>
+
+              <td class="hidden md:table-cell font-mono text-sm text-suave">{{ produto.codigoBarras }}</td>
+
+              <td class="text-right">
+                @if (produto.estoque <= 5) {
+                  <span class="selo bg-amber-500/15 text-destaque">{{ produto.estoque }}</span>
+                } @else {
+                  <span class="tabular-nums">{{ produto.estoque }}</span>
+                }
+              </td>
+
+              <td class="text-right font-bold text-marca tabular-nums whitespace-nowrap">
+                {{ produto.valor | currency: 'BRL' }}
+              </td>
+
+              <td>
+                <div class="flex justify-end gap-1">
+                  <a
+                    [routerLink]="['/produtos/editar', produto.id]"
+                    class="btn-icone !w-10 !h-10"
+                    title="Editar"
+                    aria-label="Editar produto"
+                  >
+                    <span class="material-icons">edit</span>
+                  </a>
+                  <button
+                    type="button"
+                    (click)="excluir(produto.id)"
+                    class="btn-icone !w-10 !h-10 !text-red-300 hover:!bg-red-500/15"
+                    title="Excluir"
+                    aria-label="Excluir produto"
+                  >
+                    <span class="material-icons">delete_outline</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="text-center text-suave !py-10">Nenhum produto encontrado.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
