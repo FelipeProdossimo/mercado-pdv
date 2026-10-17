@@ -1,73 +1,115 @@
-<div class="min-h-screen bg-gray-950 text-white p-8">
-  <h1 class="text-4xl font-bold mb-8">Dashboard</h1>
+<div class="p-4 md:p-6 xl:p-8 max-w-[1600px] mx-auto">
+  <div class="flex flex-wrap items-end justify-between gap-3 mb-6">
+    <div>
+      <h1 class="titulo-pagina">Visão geral</h1>
+      <p class="text-suave mt-1 first-letter:uppercase">{{ hoje | date: "EEEE, d 'de' MMMM" }}</p>
+    </div>
+    <a routerLink="/vendas" class="btn-secundario">
+      <span class="material-icons">receipt_long</span>
+      Ver vendas
+    </a>
+  </div>
 
   @if (dashboard) {
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-      <div class="bg-gray-900 rounded-2xl p-6">
-        <p class="text-gray-400 mb-2">Total vendido hoje</p>
-
-        <h2 class="text-3xl font-bold text-green-400">R$ {{ dashboard.totalVendidoHoje }}</h2>
+    <div class="grid grid-cols-2 xl:grid-cols-4 gap-3 md:gap-4">
+      <div class="card p-4 md:p-5">
+        <div class="flex items-center justify-between">
+          <p class="text-suave text-sm font-medium">Vendido hoje</p>
+          <span class="w-10 h-10 rounded-xl bg-marca/15 text-marca grid place-items-center">
+            <span class="material-icons">payments</span>
+          </span>
+        </div>
+        <p class="text-2xl md:text-3xl font-extrabold mt-3 tabular-nums">
+          {{ dashboard.totalVendidoHoje | currency: 'BRL' }}
+        </p>
       </div>
 
-      <div class="bg-gray-900 rounded-2xl p-6">
-        <p class="text-gray-400 mb-2">Vendas hoje</p>
-
-        <h2 class="text-3xl font-bold text-blue-400">
+      <div class="card p-4 md:p-5">
+        <div class="flex items-center justify-between">
+          <p class="text-suave text-sm font-medium">Vendas hoje</p>
+          <span class="w-10 h-10 rounded-xl bg-sky-500/15 text-sky-300 grid place-items-center">
+            <span class="material-icons">shopping_bag</span>
+          </span>
+        </div>
+        <p class="text-2xl md:text-3xl font-extrabold mt-3 tabular-nums">
           {{ dashboard.quantidadeVendasHoje }}
-        </h2>
+        </p>
       </div>
 
-      <div class="bg-gray-900 rounded-2xl p-6">
-        <p class="text-gray-400 mb-2">Produto mais vendido</p>
-
-        <h2 class="text-2xl font-bold text-purple-400">
-          {{ dashboard.produtoMaisVendido }}
-        </h2>
+      <div class="card p-4 md:p-5">
+        <div class="flex items-center justify-between">
+          <p class="text-suave text-sm font-medium">Ticket médio</p>
+          <span class="w-10 h-10 rounded-xl bg-violet-500/15 text-violet-300 grid place-items-center">
+            <span class="material-icons">receipt</span>
+          </span>
+        </div>
+        <p class="text-2xl md:text-3xl font-extrabold mt-3 tabular-nums">
+          {{ ticketMedio | currency: 'BRL' }}
+        </p>
       </div>
 
-      <div class="bg-gray-900 rounded-2xl p-6">
-        <p class="text-gray-400 mb-2">Estoque baixo</p>
-
-        <h2 class="text-3xl font-bold text-red-400">
+      <a routerLink="/produtos" class="card p-4 md:p-5 hover:border-destaque/50 transition-colors">
+        <div class="flex items-center justify-between">
+          <p class="text-suave text-sm font-medium">Estoque baixo</p>
+          <span class="w-10 h-10 rounded-xl bg-amber-500/15 text-destaque grid place-items-center">
+            <span class="material-icons">warning_amber</span>
+          </span>
+        </div>
+        <p class="text-2xl md:text-3xl font-extrabold mt-3 tabular-nums">
           {{ dashboard.produtosEstoqueBaixo }}
-        </h2>
+          <span class="text-base font-medium text-suave">produto(s)</span>
+        </p>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-3 md:gap-4 mt-3 md:mt-4">
+      <div class="card p-4 md:p-6 xl:col-span-2">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-lg font-bold">Faturamento por mês</h2>
+          <span class="text-sm text-suave">Total: {{ dashboard.faturamentoTotal | currency: 'BRL' }}</span>
+        </div>
+        <div id="grafico-vendas" class="w-full min-h-[300px]"></div>
       </div>
-    </div>
 
-    <div class="bg-gray-900 rounded-2xl p-6 mt-8">
-      <h2 class="text-2xl font-bold mb-6">Vendas Mensais</h2>
+      <div class="card p-4 md:p-6">
+        <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+          <span class="material-icons text-destaque">emoji_events</span>
+          Mais vendidos
+        </h2>
 
-      <div id="grafico-vendas" class="w-full"></div>
-    </div>
-    <div class="bg-gray-900 rounded-2xl p-6 mt-8">
-      <h2 class="text-2xl font-bold mb-4">🏆 Produtos Mais Vendidos</h2>
+        @for (produto of maisVendidos; track produto.produto; let i = $index) {
+          <div class="py-2.5">
+            <div class="flex justify-between items-center gap-3 text-sm mb-1.5">
+              <span class="truncate">
+                <span class="text-suave font-mono mr-1.5">{{ i + 1 }}.</span>{{ produto.produto }}
+              </span>
+              <span class="font-bold tabular-nums shrink-0">{{ produto.quantidadeVendida }} un.</span>
+            </div>
+            <div class="h-2 rounded-full bg-painel-2 overflow-hidden">
+              <div
+                class="h-full rounded-full bg-gradient-to-r from-marca-forte to-marca"
+                [style.width.%]="percentualMaisVendido(produto.quantidadeVendida)"
+              ></div>
+            </div>
+          </div>
+        } @empty {
+          <p class="text-suave text-sm">Nenhuma venda aprovada ainda.</p>
+        }
 
-      @for (produto of maisVendidos; track produto.produto) {
-        <div class="flex justify-between items-center py-3 border-b border-gray-800">
-          <span>
-            {{ produto.produto }}
-          </span>
+        <h2 class="text-lg font-bold mt-6 mb-3 flex items-center gap-2">
+          <span class="material-icons text-destaque">inventory</span>
+          Repor estoque
+        </h2>
 
-          <span class="text-green-400 font-bold">
-            {{ produto.quantidadeVendida }}
-          </span>
-        </div>
-      }
-    </div>
-    <div class="bg-gray-900 rounded-2xl p-6 mt-8">
-      <h2 class="text-2xl font-bold mb-4">⚠ Estoque Baixo</h2>
-
-      @for (produto of estoqueBaixo; track produto.id) {
-        <div class="flex justify-between py-2 border-b border-gray-800">
-          <span>
-            {{ produto.descricao }}
-          </span>
-
-          <span class="text-red-400 font-bold">
-            {{ produto.estoque }}
-          </span>
-        </div>
-      }
+        @for (produto of estoqueBaixo; track produto.id) {
+          <div class="flex justify-between items-center py-2 border-b border-borda last:border-0 text-sm">
+            <span class="truncate">{{ produto.descricao }}</span>
+            <span class="selo bg-amber-500/15 text-destaque shrink-0">{{ produto.estoque }} un.</span>
+          </div>
+        } @empty {
+          <p class="text-suave text-sm">Estoque em dia.</p>
+        }
+      </div>
     </div>
   }
 </div>

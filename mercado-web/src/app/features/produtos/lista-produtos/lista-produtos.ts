@@ -18,6 +18,19 @@ export class ListaProdutos implements OnInit {
   private produtoService = inject(ProdutoService);
 
   produtos: Produto[] = [];
+  filtro = '';
+
+  get produtosFiltrados(): Produto[] {
+    const texto = this.filtro.trim().toLowerCase();
+
+    if (!texto) {
+      return this.produtos;
+    }
+
+    return this.produtos.filter(
+      (x) => x.descricao.toLowerCase().includes(texto) || x.codigoBarras.includes(texto),
+    );
+  }
 
   ngOnInit(): void {
     this.carregarProdutos();
@@ -37,7 +50,6 @@ export class ListaProdutos implements OnInit {
   }
 
   excluir(id: number): void {
-    debugger;
     if (!confirm('Deseja excluir este produto?')) {
       return;
     }

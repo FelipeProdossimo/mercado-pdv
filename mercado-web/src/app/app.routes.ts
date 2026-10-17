@@ -1,14 +1,9 @@
 import { Routes } from '@angular/router';
 import { Login } from './features/auth/login/login';
-import { HomeComponent } from './features/dashboard/home/home';
 import { AdminLayout } from './layout/admin-layout/admin-layout';
-import { ListaProdutos } from './features/produtos/lista-produtos/lista-produtos';
-import { ListaVendas } from './features/vendas/lista-vendas/lista-vendas';
-import { Relatorios } from './features/relatorios/relatorios/relatorios';
-import { FormProduto } from './features/produtos/form-produto/form-produto';
-import { NovaVenda } from './features/vendas/nova-venda/nova-venda';
-import { DetalheVenda } from './features/vendas/detalhe-venda/detalhe-venda';
 
+// Cada tela é carregada sob demanda: o ApexCharts, por exemplo, só é baixado
+// quando o dashboard é aberto, e a tela de login abre mais rápido.
 export const routes: Routes = [
   {
     path: '',
@@ -22,38 +17,42 @@ export const routes: Routes = [
     children: [
       {
         path: 'dashboard',
-        component: HomeComponent,
+        loadComponent: () => import('./features/dashboard/home/home').then((m) => m.HomeComponent),
       },
-
       {
         path: 'produtos',
-        component: ListaProdutos,
-      },
-
-      {
-        path: 'vendas',
-        component: ListaVendas,
-      },
-
-      {
-        path: 'relatorios',
-        component: Relatorios,
+        loadComponent: () =>
+          import('./features/produtos/lista-produtos/lista-produtos').then((m) => m.ListaProdutos),
       },
       {
         path: 'produtos/novo',
-        component: FormProduto,
+        loadComponent: () =>
+          import('./features/produtos/form-produto/form-produto').then((m) => m.FormProduto),
       },
       {
         path: 'produtos/editar/:id',
-        component: FormProduto,
+        loadComponent: () =>
+          import('./features/produtos/form-produto/form-produto').then((m) => m.FormProduto),
+      },
+      {
+        path: 'vendas',
+        loadComponent: () =>
+          import('./features/vendas/lista-vendas/lista-vendas').then((m) => m.ListaVendas),
       },
       {
         path: 'vendas/nova',
-        component: NovaVenda,
+        loadComponent: () =>
+          import('./features/vendas/nova-venda/nova-venda').then((m) => m.NovaVenda),
       },
       {
         path: 'vendas/:id',
-        component: DetalheVenda,
+        loadComponent: () =>
+          import('./features/vendas/detalhe-venda/detalhe-venda').then((m) => m.DetalheVenda),
+      },
+      {
+        path: 'relatorios',
+        loadComponent: () =>
+          import('./features/relatorios/relatorios/relatorios').then((m) => m.Relatorios),
       },
     ],
   },

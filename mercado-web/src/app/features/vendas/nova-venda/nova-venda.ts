@@ -70,6 +70,39 @@ export class NovaVenda implements OnInit, AfterViewInit, OnDestroy {
   private mp?: any;
   private cardForm?: any;
 
+  // Botões de pagamento da tela e do popup. As classes ficam aqui (e não no
+  // template) para o Tailwind encontrá-las na varredura do código.
+  public readonly opcoesPagamento = [
+    {
+      id: FormaPagamento.Dinheiro,
+      tecla: 'F1',
+      texto: 'Dinheiro',
+      icone: 'payments',
+      classe: 'bg-emerald-500/15 border-emerald-500/40 text-emerald-200 hover:bg-emerald-500/25',
+    },
+    {
+      id: FormaPagamento.Pix,
+      tecla: 'F2',
+      texto: 'PIX',
+      icone: 'bolt',
+      classe: 'bg-teal-500/15 border-teal-500/40 text-teal-200 hover:bg-teal-500/25',
+    },
+    {
+      id: FormaPagamento.CartaoDebito,
+      tecla: 'F3',
+      texto: 'Débito',
+      icone: 'credit_card',
+      classe: 'bg-sky-500/15 border-sky-500/40 text-sky-200 hover:bg-sky-500/25',
+    },
+    {
+      id: FormaPagamento.CartaoCredito,
+      tecla: 'F4',
+      texto: 'Crédito',
+      icone: 'credit_score',
+      classe: 'bg-amber-500/15 border-amber-500/40 text-amber-200 hover:bg-amber-500/25',
+    },
+  ];
+
   private readonly teclasPagamento: Record<string, number> = {
     F1: FormaPagamento.Dinheiro,
     F2: FormaPagamento.Pix,
@@ -127,6 +160,18 @@ export class NovaVenda implements OnInit, AfterViewInit, OnDestroy {
         event.preventDefault();
         this.popupFormaPagamento = false;
         this.focarPesquisa();
+      }
+
+      return;
+    }
+
+    // Atalho direto, sem abrir o popup: F1 a F4 já finalizam com a forma
+    // de pagamento escolhida, como num PDV de verdade.
+    if (event.key in this.teclasPagamento) {
+      event.preventDefault();
+
+      if (this.itens.length && !this.enviando) {
+        this.selecionarPagamento(this.teclasPagamento[event.key]);
       }
 
       return;

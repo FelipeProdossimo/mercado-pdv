@@ -10,6 +10,30 @@ Sistema full-stack de ponto de venda para mercado/loja física: controle de prod
 - **API**: [`Mercado.Api`](Mercado.Api) — .NET 9, PostgreSQL, JWT
 - **Front-end**: [`mercado-web`](mercado-web) — Angular 20, Angular Material, Tailwind CSS
 
+## Telas
+
+**Caixa (PDV):** leitor de código de barras, total sempre visível e atalhos F1–F4 para a forma de pagamento.
+
+![Tela do caixa com itens no carrinho](docs/prints/08-caixa.png)
+
+| PIX com QR Code real (sandbox do Mercado Pago) | Confirmação automática do pagamento |
+|---|---|
+| ![QR Code do PIX](docs/prints/10-pix-qrcode.png) | ![PIX aprovado](docs/prints/11-pix-aprovado.png) |
+
+| Dashboard | Forma de pagamento |
+|---|---|
+| ![Dashboard](docs/prints/02-dashboard.png) | ![Escolha da forma de pagamento](docs/prints/09-forma-pagamento.png) |
+
+| Produtos | Menu recolhível |
+|---|---|
+| ![Lista de produtos](docs/prints/03-produtos.png) | ![Menu lateral aberto](docs/prints/07-menu.png) |
+
+**No tablet:** em pé, o total vira uma barra fixa embaixo, e os botões têm tamanho de toque.
+
+| Caixa | Pagamento | Dashboard |
+|---|---|---|
+| ![Caixa no tablet](docs/prints/tablet/tablet-08-caixa.png) | ![Pagamento no tablet](docs/prints/tablet/tablet-09-forma-pagamento.png) | ![Dashboard no tablet](docs/prints/tablet/tablet-02-dashboard.png) |
+
 ## Funcionalidades
 
 - **Autenticação** com JWT + refresh token e controle de papéis (roles) de usuário
@@ -20,8 +44,8 @@ Sistema full-stack de ponto de venda para mercado/loja física: controle de prod
   - **PIX real**: gera QR Code via [Mercado Pago](https://www.mercadopago.com.br/developers) (API de Orders), com polling de status, expiração em 15 min e cancelamento — estoque só é baixado quando o pagamento é confirmado
   - **Cartão via Mercado Pago**: tokenização segura no front (o número do cartão nunca passa pelo back-end)
 - **Notificações em tempo real** via SignalR (ex.: atualização de status de pagamento)
-- **Dashboard** com gráficos (ApexCharts) de vendas e produtos mais vendidos
-- **Relatórios** em PDF (QuestPDF)
+- **Dashboard** com faturamento do dia, ticket médio, gráfico mensal (ApexCharts) e produtos mais vendidos, considerando só vendas aprovadas
+- **Relatórios** em PDF (QuestPDF) no back-end; a tela de relatórios do front ainda está em desenvolvimento
 - **Emissão de NFC-e** via [Focus NFe](https://focusnfe.com.br) (modelo implementado, aguardando CNPJ/homologação para teste ponta a ponta)
 
 ## Stack

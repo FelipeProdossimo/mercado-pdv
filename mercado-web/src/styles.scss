@@ -1,14 +1,107 @@
 @import "tailwindcss";
 
-.btn-primary {
-  @apply bg-blue-600 hover:bg-blue-700
-         text-white font-bold
-         rounded-xl
-         transition-colors;
+// Paleta do PDV: fundo azul-noite, painéis em camadas e verde-esmeralda
+// como cor da marca (dinheiro, confirmação). Âmbar fica para destaques.
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
-  @apply disabled:bg-gray-700
-         disabled:text-gray-400
-         disabled:opacity-50
-         disabled:cursor-not-allowed
-         disabled:hover:bg-gray-700;
+  --color-fundo: #0a1120;
+  --color-painel: #111a2e;
+  --color-painel-2: #18233b;
+  --color-borda: #233150;
+  --color-suave: #8fa0bd;
+
+  --color-marca: #10b981;
+  --color-marca-forte: #059669;
+  --color-marca-clara: #6ee7b7;
+  --color-destaque: #fbbf24;
+}
+
+html,
+body {
+  @apply h-full bg-fundo text-slate-100 antialiased;
+}
+
+// Ícones do Material Icons com tamanho que acompanha o texto.
+.material-icons {
+  font-size: 1.25em;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+@utility card {
+  @apply bg-painel border border-borda rounded-2xl;
+}
+
+@utility titulo-pagina {
+  @apply text-2xl md:text-3xl font-extrabold tracking-tight;
+}
+
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5
+         font-semibold transition-colors select-none
+         disabled:opacity-40 disabled:cursor-not-allowed;
+}
+
+@utility btn-primario {
+  @apply btn bg-marca text-slate-950 hover:bg-marca-clara;
+}
+
+@utility btn-secundario {
+  @apply btn bg-painel-2 text-slate-100 border border-borda hover:bg-borda;
+}
+
+@utility btn-perigo {
+  @apply btn bg-red-500/15 text-red-300 hover:bg-red-500/30;
+}
+
+@utility btn-icone {
+  @apply inline-flex items-center justify-center w-11 h-11 rounded-xl
+         text-slate-200 hover:bg-painel-2 transition-colors;
+}
+
+// Mantido por compatibilidade: botão principal das telas de venda.
+@utility btn-primary {
+  @apply btn-primario;
+}
+
+@utility campo {
+  @apply w-full rounded-xl bg-painel-2 border border-borda px-4 py-3 text-slate-100
+         placeholder:text-suave/70 outline-none transition-colors
+         focus:border-marca focus:ring-2 focus:ring-marca/25;
+}
+
+@utility rotulo {
+  @apply block text-sm font-medium text-suave mb-1.5;
+}
+
+.tabela {
+  @apply w-full text-left;
+
+  thead th {
+    @apply px-4 py-3 text-xs font-semibold uppercase tracking-wider text-suave bg-painel-2;
+  }
+
+  tbody td {
+    @apply px-4 py-3 border-t border-borda;
+  }
+
+  tbody tr {
+    @apply transition-colors hover:bg-painel-2/60;
+  }
+}
+
+@utility selo {
+  @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold;
+}
+
+// Tecla de atalho desenhada como tecla de teclado.
+@utility tecla {
+  @apply inline-flex items-center justify-center min-w-8 h-7 px-1.5 rounded-md
+         bg-painel-2 border border-borda border-b-2 text-xs font-bold text-slate-200;
+}
+
+// Gráficos do ApexCharts no tema escuro.
+.apexcharts-tooltip {
+  @apply shadow-xl;
 }

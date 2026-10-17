@@ -1,15 +1,16 @@
 import { Component, OnInit, inject } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { VendaService } from '../../../core/services/venda';
 
 import { VendaDetalhe } from '../../../core/models/venda-detalhe.model';
+import { rotuloStatus } from '../../../core/enums/status-pagamento-rotulo';
 
 @Component({
   selector: 'app-detalhe-venda',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './detalhe-venda.html',
 })
 export class DetalheVenda implements OnInit {
@@ -18,6 +19,8 @@ export class DetalheVenda implements OnInit {
   private vendaService = inject(VendaService);
 
   venda?: VendaDetalhe;
+
+  readonly rotuloStatus = rotuloStatus;
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));

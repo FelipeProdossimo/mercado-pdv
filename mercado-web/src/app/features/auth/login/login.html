@@ -1,48 +1,75 @@
-<div class="min-h-screen bg-gray-950 flex items-center justify-center">
-  <div class="bg-gray-900 w-full max-w-md rounded-2xl p-8 shadow-2xl">
-    <h1 class="text-4xl font-bold text-white text-center mb-8">
-      Mercado ERP
-    </h1>
-    <form
-      class="space-y-5"
-      (ngSubmit)="login()">
-      <div>
-        <label class="text-gray-300 block mb-2">
-          Email
-        </label>
-        <input
-          [(ngModel)]="email"
-          name="email"
-          type="email"
-          class="w-full rounded-xl bg-gray-800 border border-gray-700 p-3 text-white outline-none focus:border-blue-500"
-        />
+<div class="min-h-dvh grid lg:grid-cols-2 bg-fundo">
+  <!-- Lado da marca: aparece a partir de 1024px -->
+  <div
+    class="hidden lg:flex flex-col justify-between p-12 relative overflow-hidden bg-gradient-to-br from-marca-forte/40 via-painel to-fundo border-r border-borda"
+  >
+    <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-marca/20 blur-3xl"></div>
+
+    <div class="relative flex items-center gap-3">
+      <span class="w-11 h-11 rounded-xl bg-gradient-to-br from-marca to-teal-500 grid place-items-center text-slate-950 font-black text-lg">
+        FV
+      </span>
+      <span class="font-extrabold text-xl">Folha Verde <span class="text-marca">PDV</span></span>
+    </div>
+
+    <div class="relative">
+      <h2 class="text-4xl xl:text-5xl font-black leading-tight">
+        Venda rápida,<br />
+        <span class="text-marca">estoque sempre certo.</span>
+      </h2>
+      <ul class="mt-8 space-y-3 text-slate-300">
+        <li class="flex items-center gap-3"><span class="material-icons text-marca">bolt</span> PIX com confirmação automática</li>
+        <li class="flex items-center gap-3"><span class="material-icons text-marca">qr_code_scanner</span> Leitor de código de barras e atalhos F1–F4</li>
+        <li class="flex items-center gap-3"><span class="material-icons text-marca">insights</span> Dashboard em tempo real</li>
+      </ul>
+    </div>
+
+    <p class="relative text-suave text-sm">Sistema de ponto de venda · .NET + Angular</p>
+  </div>
+
+  <div class="flex items-center justify-center p-6">
+    <div class="w-full max-w-sm">
+      <div class="lg:hidden flex items-center gap-3 mb-10 justify-center">
+        <span class="w-11 h-11 rounded-xl bg-gradient-to-br from-marca to-teal-500 grid place-items-center text-slate-950 font-black text-lg">
+          FV
+        </span>
+        <span class="font-extrabold text-xl">Folha Verde <span class="text-marca">PDV</span></span>
       </div>
-      <div>
-        <label class="text-gray-300 block mb-2">
-          Senha
-        </label>
-        <input
-          [(ngModel)]="senha"
-          name="senha"
-          type="password"
-          class="w-full rounded-xl bg-gray-800 border border-gray-700 p-3 text-white outline-none focus:border-blue-500"
-        />
-      </div>
-      @if (erro) {
-        <div class="text-red-400 text-sm">
-          {{ erro }}
+
+      <h1 class="text-3xl font-extrabold">Entrar</h1>
+      <p class="text-suave mt-1 mb-8">Acesse o caixa com seu usuário.</p>
+
+      <form class="space-y-5" (ngSubmit)="login()">
+        <div>
+          <label for="email" class="rotulo">E-mail</label>
+          <input id="email" [(ngModel)]="email" name="email" type="email" autocomplete="username" class="campo" />
         </div>
-      }
-      <button
-        [disabled]="loading"
-        class="w-full bg-blue-600 hover:bg-blue-700 transition-all rounded-xl p-3 text-white font-bold">
-        @if (loading) {
-          Entrando...
+        <div>
+          <label for="senha" class="rotulo">Senha</label>
+          <input
+            id="senha"
+            [(ngModel)]="senha"
+            name="senha"
+            type="password"
+            autocomplete="current-password"
+            class="campo"
+          />
+        </div>
+        @if (erro) {
+          <div class="flex items-center gap-2 rounded-xl bg-red-500/10 border border-red-500/30 px-4 py-3 text-red-300 text-sm">
+            <span class="material-icons">error_outline</span>
+            {{ erro }}
+          </div>
         }
-        @else {
-          Entrar
-        }
-      </button>
-    </form>
+        <button [disabled]="loading" class="btn-primario w-full !py-3.5 text-lg">
+          @if (loading) {
+            Entrando...
+          } @else {
+            Entrar
+            <span class="material-icons">arrow_forward</span>
+          }
+        </button>
+      </form>
+    </div>
   </div>
 </div>
