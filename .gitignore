@@ -3,6 +3,7 @@
 # =========================
 **/bin/
 **/obj/
+**/TestResults/
 *.user
 .vs/
 
@@ -12,6 +13,7 @@
 mercado-web/node_modules/
 mercado-web/dist/
 mercado-web/.angular/
+mercado-web/coverage/
 npm-debug.log
 yarn-error.log
 
