@@ -10,7 +10,7 @@ public record ResultadoPagamentoCartao(
 // Integração com o Mercado Pago (API de Orders) para cartão de débito/crédito
 // real. Ao contrário do PIX, o resultado normalmente já vem na resposta da
 // criação do pedido — não há polling.
-public class PagamentoCartaoService
+public class PagamentoCartaoService : IPagamentoCartaoService
 {
     private readonly string _emailPagadorPadrao;
 

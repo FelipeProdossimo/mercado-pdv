@@ -9,7 +9,7 @@ public record CobrancaPixResultado(
     string QrCodeBase64,
     DateTime ExpiraEm);
 
-public class PagamentoPixService
+public class PagamentoPixService : IPagamentoPixService
 {
     private readonly string _emailPagadorPadrao;
     private readonly string? _nomePagadorTeste;

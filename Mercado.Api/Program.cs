@@ -113,9 +113,9 @@ public class Program
 
         builder.Services.AddScoped<RefreshTokenService>();
 
-        builder.Services.AddScoped<PagamentoPixService>();
+        builder.Services.AddScoped<IPagamentoPixService, PagamentoPixService>();
 
-        builder.Services.AddScoped<PagamentoCartaoService>();
+        builder.Services.AddScoped<IPagamentoCartaoService, PagamentoCartaoService>();
 
         // Homologação: token da empresa fictícia cadastrada no painel de
         // testes da Focus NFe, via `dotnet user-secrets set "Nfce:FocusNfeToken"

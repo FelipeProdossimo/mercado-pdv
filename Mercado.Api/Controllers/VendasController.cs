@@ -19,16 +19,16 @@ public class VendasController : ControllerBase
 {
     private readonly AppDbContext _context;
     private readonly IHubContext<NotificacaoHub> _hub;
-    private readonly PagamentoPixService _pagamentoPixService;
-    private readonly PagamentoCartaoService _pagamentoCartaoService;
+    private readonly IPagamentoPixService _pagamentoPixService;
+    private readonly IPagamentoCartaoService _pagamentoCartaoService;
     private readonly NfceService _nfceService;
     private readonly ILogger<VendasController> _logger;
 
     public VendasController(
     AppDbContext context,
     IHubContext<NotificacaoHub> hub,
-    PagamentoPixService pagamentoPixService,
-    PagamentoCartaoService pagamentoCartaoService,
+    IPagamentoPixService pagamentoPixService,
+    IPagamentoCartaoService pagamentoCartaoService,
     NfceService nfceService,
     ILogger<VendasController> logger)
     {
