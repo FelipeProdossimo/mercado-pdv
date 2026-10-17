@@ -397,7 +397,10 @@ public class VendasController : ControllerBase
     [HttpGet("pix/{vendaId}/status")]
     public async Task<ActionResult> ConsultarStatusPix(int vendaId)
     {
+        // Os itens precisam vir junto: AprovarPagamento percorre venda.Itens
+        // para baixar o estoque quando o PIX é confirmado.
         var venda = await _context.Vendas
+            .Include(x => x.Itens)
             .FirstOrDefaultAsync(x => x.Id == vendaId);
 
         if (venda == null)
