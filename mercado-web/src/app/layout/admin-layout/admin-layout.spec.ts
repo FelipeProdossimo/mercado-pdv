@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AdminLayout } from './admin-layout';
+import { providersTeste } from '../../../testing/providers-teste';
 
 describe('AdminLayout', () => {
   let component: AdminLayout;
@@ -8,16 +9,16 @@ describe('AdminLayout', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AdminLayout]
-    })
-    .compileComponents();
+      imports: [AdminLayout],
+      providers: providersTeste,
+    }).compileComponents();
 
     fixture = TestBed.createComponent(AdminLayout);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('deve criar a tela', () => {
     expect(component).toBeTruthy();
   });
 });

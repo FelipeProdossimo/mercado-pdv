@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ListaProdutos } from './lista-produtos';
+import { providersTeste } from '../../../../testing/providers-teste';
 
 describe('ListaProdutos', () => {
   let component: ListaProdutos;
@@ -8,16 +9,16 @@ describe('ListaProdutos', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ListaProdutos]
-    })
-    .compileComponents();
+      imports: [ListaProdutos],
+      providers: providersTeste,
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ListaProdutos);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('deve criar a tela', () => {
     expect(component).toBeTruthy();
   });
 });
