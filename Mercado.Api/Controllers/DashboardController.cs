@@ -1,5 +1,7 @@
 ﻿using Mercado.Api.Context;
 using Mercado.Api.DTOs.Dashboard;
+using Mercado.Api.Entities;
+using Mercado.Api.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +13,15 @@ namespace Mercado.Api.Controllers;
 [Authorize]
 public class DashboardController : ControllerBase
 {
+    // Mesmo limite usado no card e na lista de estoque baixo.
+    private const int LimiteEstoqueBaixo = 5;
+
     private readonly AppDbContext _context;
+
+    // O dashboard só considera vendas pagas: PIX pendente, recusado ou
+    // cancelado não é faturamento (mesma regra do fechamento de caixa).
+    private IQueryable<Venda> VendasAprovadas =>
+        _context.Vendas.Where(x => x.StatusPagamento == StatusPagamentoEnum.Aprovado);
 
     public DashboardController(AppDbContext context)
     {
@@ -23,7 +33,7 @@ public class DashboardController : ControllerBase
     {
         var hoje = DateTime.UtcNow.Date;
 
-        var vendasHoje = await _context.Vendas
+        var vendasHoje = await VendasAprovadas
             .Where(x => x.DataVenda.Date == hoje)
             .ToListAsync();
 
@@ -34,11 +44,12 @@ public class DashboardController : ControllerBase
             vendasHoje.Count;
 
         var faturamentoTotal =
-            await _context.Vendas
+            await VendasAprovadas
                 .SumAsync(x => x.ValorTotal);
 
         var produtoMaisVendido =
             await _context.ItensVenda
+                .Where(x => x.Venda.StatusPagamento == StatusPagamentoEnum.Aprovado)
                 .GroupBy(x => x.Produto.Descricao)
                 .Select(x => new
                 {
@@ -51,7 +62,7 @@ public class DashboardController : ControllerBase
         var estoqueBaixo =
             await _context.Produtos
                 .Where(w => w.Ativo)
-                .CountAsync(x => x.Estoque < 10);
+                .CountAsync(x => x.Estoque <= LimiteEstoqueBaixo);
 
         var dto = new DashboardDTO
         {
@@ -77,7 +88,7 @@ public class DashboardController : ControllerBase
     [HttpGet("grafico-vendas")]
     public async Task<ActionResult> ObterGraficoVendas()
     {
-        var vendas = await _context.Vendas
+        var vendas = await VendasAprovadas
             .GroupBy(x => new
             {
                 x.DataVenda.Year,
@@ -91,13 +102,16 @@ public class DashboardController : ControllerBase
             })
             .ToListAsync();
 
+        // Ordena por ano e mês numéricos: ordenar pelo texto "10/2026"
+        // colocava outubro antes de maio.
         var resultado = vendas
+            .OrderBy(x => x.Year)
+            .ThenBy(x => x.Month)
             .Select(x => new GraficoVendaMensalDTO
             {
                 Mes = $"{x.Month}/{x.Year}",
                 Total = x.Total
             })
-            .OrderBy(x => x.Mes)
             .ToList();
 
         return Ok(resultado);
@@ -107,7 +121,7 @@ public class DashboardController : ControllerBase
     public async Task<ActionResult> ObterMaisVendidos()
     {
         var dados = await _context.ItensVenda
-            .Include(x => x.Produto)
+            .Where(x => x.Venda.StatusPagamento == StatusPagamentoEnum.Aprovado)
             .GroupBy(x => x.Produto.Descricao)
             .Select(x => new ProdutoMaisVendidoDTO
             {
@@ -126,7 +140,7 @@ public class DashboardController : ControllerBase
     public async Task<ActionResult> ObterEstoqueBaixo()
     {
         var produtos = await _context.Produtos
-            .Where(x => x.Ativo && x.Estoque <= 5)
+            .Where(x => x.Ativo && x.Estoque <= LimiteEstoqueBaixo)
             .OrderBy(x => x.Estoque)
             .Select(x => new
             {
